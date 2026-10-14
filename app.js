@@ -121,17 +121,36 @@
     a.href = u; a.download = file.name; document.body.appendChild(a); a.click();
     setTimeout(function () { document.body.removeChild(a); URL.revokeObjectURL(u); }, 1500);
   }
-  function shareFile(btn) {
-    var url = btn.getAttribute('data-url'), title = btn.getAttribute('data-title'), f = FILES[url];
-    if (btn.getAttribute('data-mode') === 'open' || !f || f === 'loading' || f === 'failed') { window.open(url, '_blank'); return; }
-    if (navigator.share && navigator.canShare && navigator.canShare({ files: [f] })) {
-      navigator.share({ files: [f], title: title }).catch(function (e) {
-        if (e && e.name !== 'AbortError') { saveBlob(f); toast('PDF сохранён на устройство'); }
+  function absUrl(u) { try { return new URL(u, location.href).href; } catch (e) { return u; } }
+  /* запасной путь: если файл не уходит через меню «Поделиться», отправляем ссылку на PDF;
+     если меню нет вовсе, сохраняем/открываем файл */
+  function shareLink(url, title, f) {
+    if (navigator.share) {
+      navigator.share({ title: title, url: absUrl(url) }).catch(function (e) {
+        if (e && e.name === 'AbortError') return;
+        if (f && typeof f === 'object') { saveBlob(f); toast('Меню отправки недоступно (' + (e && e.name || 'ошибка') + '). PDF сохранён на устройство.'); }
+        else window.open(url, '_blank');
       });
       return;
     }
-    saveBlob(f);
-    toast('PDF сохранён. Текст рассылки — кнопка «Скопировать текст».');
+    if (f && typeof f === 'object') { saveBlob(f); toast('PDF сохранён. Отправьте его из «Загрузок» или «Файлов».'); }
+    else window.open(url, '_blank');
+  }
+  function shareFile(btn) {
+    var url = btn.getAttribute('data-url'), title = btn.getAttribute('data-title'), f = FILES[url];
+    var ready = f && typeof f === 'object';
+    if (ready && navigator.share && navigator.canShare) {
+      var can = false;
+      try { can = navigator.canShare({ files: [f] }); } catch (e) { can = false; }
+      if (can) {
+        navigator.share({ files: [f], title: title }).catch(function (e) {
+          if (e && e.name === 'AbortError') return;
+          shareLink(url, title, f);                       // файл не ушёл — пробуем отправить ссылку
+        });
+        return;
+      }
+    }
+    shareLink(url, title, ready ? f : null);
   }
 
   /* ---------- копирование текста рассылки ---------- */
