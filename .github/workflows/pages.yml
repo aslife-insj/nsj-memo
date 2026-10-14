@@ -27,7 +27,7 @@ jobs:
       - name: Собрать сайт и список презентеров
         run: |
           mkdir _site
-          cp -r index.html app.js app.css content.json robots.txt assets media presenters _site/
+          cp -r *.html app.js app.css content.json robots.txt assets media presenters _site/
           python3 tools/build_manifest.py . _site/materials.json
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
