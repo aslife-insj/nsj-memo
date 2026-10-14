@@ -257,6 +257,7 @@
   "source": "manifest",
   "manifest_url": "materials.json",
   "base_url": "",
-  "prefix": "presenters/"
+  "prefix": "presenters/",
+  "title": ""
  }
 }

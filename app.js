@@ -218,7 +218,8 @@
   }
   function materialsBlock(p) {
     if (!C.materials || !pres(p).length) return '';
-    var head = '<div class="materials"><h3>Материалы для клиента</h3>', end = '</div>';
+    var ttl = (C.materials.title === undefined ? 'Материалы для клиента' : C.materials.title),
+      head = '<div class="materials">' + (ttl ? '<h3>' + esc(ttl) + '</h3>' : ''), end = '</div>';
     if (M.state === 'idle' || M.state === 'loading') {
       return head + '<span class="sk" style="width:60%"></span><span class="sk" style="width:35%"></span>' + end;
     }
