@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex"><title>Тест отправки</title>
+<style>body{font:16px/1.4 system-ui,sans-serif;margin:16px;color:#111}button{display:block;width:100%;min-height:48px;margin:10px 0;font-size:16px;border-radius:12px;border:1px solid #999;background:#fff}pre{white-space:pre-wrap;background:#f3f4f6;padding:12px;border-radius:10px;font-size:13px}</style></head>
+<body><h1>Тест отправки PDF</h1><pre id="out">Проверяю…</pre>
+<button id="b1">1. Отправить ССЫЛКУ</button>
+<button id="b2">2. Отправить ФАЙЛ PDF</button>
+<script>
+var out=document.getElementById('out'),log=[];
+function L(t){log.push(t);out.textContent=log.join('\n')}
+var PDF='presenters/maximum/maximum.pdf',file=null;
+L('Браузер: '+navigator.userAgent);
+L('https: '+window.isSecureContext);
+L('navigator.share: '+(typeof navigator.share));
+L('navigator.canShare: '+(typeof navigator.canShare));
+fetch(PDF).then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.blob()}).then(function(b){
+  file=new File([b],'test.pdf',{type:'application/pdf'});L('PDF загружен: '+b.size+' байт');
+  try{L('canShare({files}): '+(navigator.canShare?navigator.canShare({files:[file]}):'нет функции'))}catch(e){L('canShare ошибка: '+e.name+' '+e.message)}
+}).catch(function(e){L('PDF не загрузился: '+e.message)});
+document.getElementById('b1').onclick=function(){
+  if(!navigator.share){L('Ссылка: share недоступен');return}
+  navigator.share({title:'Тест',url:location.href}).then(function(){L('Ссылка: OK')},function(e){L('Ссылка ошибка: '+e.name+' '+e.message)})};
+document.getElementById('b2').onclick=function(){
+  if(!navigator.share){L('Файл: share недоступен');return}
+  if(!file){L('Файл ещё не загружен');return}
+  navigator.share({files:[file],title:'Тест'}).then(function(){L('Файл: OK')},function(e){L('Файл ошибка: '+e.name+' '+e.message)})};
+</script></body></html>
