@@ -187,12 +187,17 @@
       '<span class="mini"><b>' + esc(p.term) + '</b><i>·</i><b>' + esc(p.key) + '</b><i>·</i><span>' + esc(p.payment) + '</span></span>' +
       '<span class="desc">' + esc(p.keydesc) + '</span></a>';
   }
+  function noticeHtml(key) {
+    var t = C.notices && C.notices[key];
+    return t ? '<div class="notice notice--' + key + '"><span class="n-ico" aria-hidden="true">i</span><span>' + esc(t) + '</span></div>' : '';
+  }
   function backBar() { return '<div class="backbar"><a class="back" href="#products"><span>←</span> Все продукты</a></div>'; }
 
   function viewHome() {
     var chips = [{ id: 'all', t: 'Все' }].concat(C.categories.map(function (c) { return { id: c.id, t: c.short }; }));
     return '<section class="screen"><h1>Памятка по продуктам</h1>' +
       '<p class="lead">Все ключевые условия в одном месте. Открой продукт или используй поиск.</p>' +
+      noticeHtml('home') +
       '<div class="chips" id="chips">' + chips.map(function (c) {
         return '<button type="button" class="chip' + (ST.filter === c.id ? ' on' : '') + '" data-filter="' + esc(c.id) + '">' + esc(c.t) + '</button>';
       }).join('') + '</div><div class="product-list" id="list">' + listHtml() + '</div></section>';
@@ -241,7 +246,8 @@
     var lim = p.limit ? '<div class="fact"><span class="lbl">Лимит лечения</span><div>' + esc(p.limit) + '</div></div>' : '';
     return '<section class="screen screen--detail">' + backBar() +
       '<div class="detail-head"><div class="eyebrow">' + esc(c.short) + '</div><h2>' + esc(p.name) + '</h2></div>' +
-      '<div class="commission"><span>Комиссия</span><b>' + esc(p.commission) + '</b></div>' +
+      noticeHtml('product') +
+      '<div class="commission"><span>Комиссионный доход</span><b>' + esc(p.commission) + '</b></div>' +
       '<div class="quickgrid"><div class="metric"><b>' + esc(p.term) + '</b><span>срок</span></div>' +
       '<div class="metric"><b class="accent">' + esc(p.key) + '</b><span>' + esc(p.keydesc) + '</span></div>' +
       '<div class="metric"><b>' + esc(p.payment) + '</b><span>' + esc(p.paydesc) + '</span></div></div>' +
@@ -256,6 +262,7 @@
       '<details><summary>Фишка продукта</summary><div class="detail-body">' + ul(p.features) + '</div></details>' +
       '<details><summary>Кому подойдет</summary><div class="detail-body">' + ul(p.audience) + '</div></details>' +
       (p.footnote ? '<div class="source">' + esc(p.footnote) + '</div>' : '') +
+      noticeHtml('legal') +
       '<div class="source">Источник: ' + esc(c.source) + '</div>' +
       '<a class="back back--bottom" href="#products"><span>←</span> Все продукты</a></section>';
   }
@@ -273,7 +280,7 @@
   }
 
   var CMP = [
-    ['Комиссия', function (p) { return p.commission; }],
+    ['Комиссионный доход', function (p) { return p.commission; }],
     ['Направление', function (p) { return catOf(p).short; }],
     ['Срок', function (p) { return p.term_full; }],
     ['Взнос', function (p) { return p.contribution; }],

@@ -113,3 +113,6 @@ details[open] summary:after{content:'–'}
 .toast.show{opacity:1;transform:none}
 .center{padding:60px 20px;text-align:center;color:var(--muted)}
 .mat-row+.mat-row{border-top:1px solid var(--line);margin-top:14px;padding-top:14px}
+.notice{display:flex;gap:10px;align-items:flex-start;margin:12px 0;padding:10px 12px;border:1px solid var(--line);background:var(--soft,#f3f4f7);border-radius:14px;font-size:13px;line-height:1.4;color:var(--muted)}
+.notice .n-ico{flex:none;width:18px;height:18px;border-radius:50%;border:1.5px solid currentColor;font-size:11px;font-weight:700;display:grid;place-items:center;margin-top:1px}
+.notice--legal{margin-top:16px;font-size:12px}
